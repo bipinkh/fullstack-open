@@ -1,0 +1,14 @@
+note over browser:
+when submit button is pressed,
+browser forbids default action of submit button,
+rerender the note list including the new note, and
+and triggers the new note creation API
+end note
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+server-->browser: {content: "mic test", date: "2021-10-19T13:42:34.576Z"}
+
+note over browser:
+browser uses DOM-API to add the elements for
+each note returned by the server
+end note
