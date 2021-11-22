@@ -5,13 +5,16 @@ const Header = ( {title} ) => <h1>{title}</h1>
 const Button = ( {clickHandler, text} ) => <button onClick={clickHandler}> {text} </button>
 
 const Statistics = ({ goodCount, neutralCount, badCount}) => {
+    const total = goodCount + neutralCount + badCount;
+    const average = total/3;
+    const positive = goodCount / total * 100;
     return <div>
         <h1>statistics</h1>
         <p>good {goodCount}</p>
         <p>neutral {neutralCount}</p>
         <p>bad {badCount}</p>
-        <p>average { (goodCount+neutralCount+badCount)/3 }</p>
-        <p>positive { goodCount / (goodCount+neutralCount+badCount) * 100 } %</p>
+        <p>average { average }</p>
+        <p>positive { positive } %</p>
     </div>
 }
 
