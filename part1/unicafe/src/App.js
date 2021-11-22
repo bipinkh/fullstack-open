@@ -4,12 +4,12 @@ const Header = ( {title} ) => <h1>{title}</h1>
 
 const Button = ( {clickHandler, text} ) => <button onClick={clickHandler}> {text} </button>
 
-const StatisticLine = ( {text, value, symbol} ) => <p>{text} {value} {symbol}</p>
+const StatisticLine = ( {text, value} ) => <tr><td>{text}</td><td>{value}</td></tr>
 
 const Statistics = ({ goodCount, neutralCount, badCount}) => {
     const total = goodCount + neutralCount + badCount;
     const average = total/3;
-    const positive = goodCount / total * 100;
+    const positive = goodCount / total * 100 +"%";
     if (total === 0){
         return <div>
             <h1>statistics</h1>
@@ -18,11 +18,15 @@ const Statistics = ({ goodCount, neutralCount, badCount}) => {
     }
     return <div>
         <h1>statistics</h1>
-        <StatisticLine text="good" value={goodCount} />
-        <StatisticLine text="neutral" value={neutralCount} />
-        <StatisticLine text="bad" value={badCount} />
-        <StatisticLine text="average" value={average} />
-        <StatisticLine text="positive" value={positive} symbol="%" />
+        <table>
+            <tbody>
+                <StatisticLine text="good" value={goodCount} />
+                <StatisticLine text="neutral" value={neutralCount} />
+                <StatisticLine text="bad" value={badCount} />
+                <StatisticLine text="average" value={average} />
+                <StatisticLine text="positive" value={positive} />
+            </tbody>
+        </table>
     </div>
 }
 
