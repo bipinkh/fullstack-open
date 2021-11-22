@@ -10,6 +10,8 @@ const Statistics = ({ goodCount, neutralCount, badCount}) => {
         <p>good {goodCount}</p>
         <p>neutral {neutralCount}</p>
         <p>bad {badCount}</p>
+        <p>average { (goodCount+neutralCount+badCount)/3 }</p>
+        <p>positive { goodCount / (goodCount+neutralCount+badCount) * 100 } %</p>
     </div>
 }
 
@@ -25,7 +27,11 @@ const App = () => {
            <Button clickHandler={ () => setGood(good+1)} text="good" />
            <Button clickHandler={ () => setNeutral(neutral+1)} text="neutral" />
            <Button clickHandler={ () => setBad(bad+1)} text="bad" />
-            <Statistics goodCount={good} neutralCount={neutral} badCount={bad} />
+            <Statistics
+                goodCount={good}
+                neutralCount={neutral}
+                badCount={bad}
+            />
         </div>
     )
 }
