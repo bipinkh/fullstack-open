@@ -19,13 +19,18 @@ const App = () => {
     // event handlers
     const addName = (event) => {
         event.preventDefault()
-        if (persons.filter(p => p.name === newName).length > 0) {
-            alert(`${newName} is already added to phonebook`);
-            return
+        const data = {name: newName.trim(), number: newNumber}
+        const duplicates = persons.filter(p => p.name === newName.trim())
+        if (
+            duplicates.length > 0 &&
+            window.confirm(`${duplicates[0].name} is already added to phonebook, replace the old number with a new one?`)
+        ){
+            phonebookService.updateEntry(duplicates[0].id, data)
+                .then( updatedPerson => setPersons( persons.map( p => p.id === duplicates[0].id ? updatedPerson : p ) ) )
+        }else {
+            phonebookService.addEntry( data )
+                .then( newPerson => setPersons( persons.concat(newPerson) ) )
         }
-
-        phonebookService.addEntry( {name: newName, number: newNumber} )
-            .then( newPerson => setPersons( persons.concat(newPerson) ) )
 
         setNewName("")
         setNewNumber("")
