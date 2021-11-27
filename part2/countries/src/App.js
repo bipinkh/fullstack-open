@@ -22,11 +22,9 @@ function App() {
         {
             filteredResult.length > 10
                 ? <p>Too many matches, specify another filter </p>
-                : (
-                    filteredResult.length === 1
-                        ? <CountryDetail country={filteredResult[0]} />
-                        : <CountryList countries={filteredResult}/>
-                )
+                : filteredResult.length === 1
+                    ? <CountryDetail country={filteredResult[0]} />
+                    : <CountryList countries={filteredResult} selectHandler={filterChangeHandler} />
         }
     </div>
   );
