@@ -7,6 +7,7 @@ import axios from "axios";
 function App() {
     const [countries, setCountries] = useState([])
     const [findQuery, setFindQuery] = useState('')
+    const [weatherAccessKey] = useState(process.env.REACT_APP_WEATHERSTACK_API_KEY)
 
     useEffect( () => {
         axios.get("https://restcountries.com/v3.1/all")
@@ -23,7 +24,7 @@ function App() {
             filteredResult.length > 10
                 ? <p>Too many matches, specify another filter </p>
                 : filteredResult.length === 1
-                    ? <CountryDetail country={filteredResult[0]} />
+                    ? <CountryDetail country={filteredResult[0]} weatherAccessKey={weatherAccessKey}/>
                     : <CountryList countries={filteredResult} selectHandler={filterChangeHandler} />
         }
     </div>
