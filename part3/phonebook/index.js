@@ -52,3 +52,12 @@ app.delete("/api/persons/:id", (request, response)=> {
     entries = entries.filter( e => e.id !== id)
     response.status(204).end()
 })
+
+app.post("/api/persons", (request, response)=>{
+    const newEntry = request.body
+    if (!newEntry.name) return response.status(400).json({error:"Missing name property"})
+    if (!newEntry.number) return response.status(400).json({error:"Missing number property"})
+    newEntry.id = Math.floor( Math.random() * 100000 )
+    entries.concat(newEntry)
+    response.json(newEntry)
+})

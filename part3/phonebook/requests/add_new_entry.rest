@@ -1,0 +1,28 @@
+// this shpuld return 200
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Bipin Khatiwada",
+  "number": "101010101"
+}
+
+
+###
+// this should return 400 for missing name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "101010101"
+}
+
+
+###
+// this should return 400 for missing number
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Bipin Khatiwada"
+}
