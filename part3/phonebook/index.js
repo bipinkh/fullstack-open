@@ -1,8 +1,8 @@
 const express = require('express')
 const app = express()
+app.use( express.json() )
 
 const PORT = 3001
-
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
@@ -38,4 +38,11 @@ app.get("/info", (request, response)=>{
     response.send(
         `<p>Phonebook has info for ${entries.length} people</p><p>${new Date()}</p>`
     )
+})
+
+app.get("/api/persons/:id", (request, response)=>{
+    const id = Number(request.params.id)
+    const person = entries.find( e => e.id === id )
+    if (person) response.json( person )
+    else response.status(404).send(`Person with id ${id} not found.`)
 })
