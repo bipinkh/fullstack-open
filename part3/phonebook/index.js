@@ -1,12 +1,18 @@
 const express = require('express')
 const app = express()
-app.use( express.json() )
+var morgan = require('morgan')
 
+// middlewares
+app.use( express.json() )
+app.use( morgan('tiny') )
+
+// port binding
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
+// application data
 let entries = [
     {
         "id": 1,
@@ -29,6 +35,9 @@ let entries = [
         "number": "39-23-6423122"
     }
 ]
+
+
+// endpoints
 
 app.get("/api/persons", (request, response)=>{
     response.json(entries)
