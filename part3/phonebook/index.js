@@ -55,9 +55,13 @@ app.delete("/api/persons/:id", (request, response)=> {
 
 app.post("/api/persons", (request, response)=>{
     const newEntry = request.body
+
     if (!newEntry.name) return response.status(400).json({error:"Missing name property"})
     if (!newEntry.number) return response.status(400).json({error:"Missing number property"})
+    if ( entries.find(e => e.name.toLowerCase().trim() === newEntry.name.toLowerCase().trim()) )
+        return response.status(400).json({error:"name must be unique"})
+
     newEntry.id = Math.floor( Math.random() * 100000 )
-    entries.concat(newEntry)
+    entries = entries.concat(newEntry)
     response.json(newEntry)
 })

@@ -26,3 +26,14 @@ Content-Type: application/json
 {
   "name": "Bipin Khatiwada"
 }
+
+
+###
+// this should return 400 for duplicate name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Bipin Khatiwada",
+  "number": "101010101"
+}
