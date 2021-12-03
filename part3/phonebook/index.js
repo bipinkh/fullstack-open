@@ -7,7 +7,7 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
-const entries = [
+let entries = [
     {
         "id": 1,
         "name": "Arto Hellas",
@@ -45,4 +45,10 @@ app.get("/api/persons/:id", (request, response)=>{
     const person = entries.find( e => e.id === id )
     if (person) response.json( person )
     else response.status(404).send(`Person with id ${id} not found.`)
+})
+
+app.delete("/api/persons/:id", (request, response)=> {
+    const id = Number(request.params.id)
+    entries = entries.filter( e => e.id !== id)
+    response.status(204).end()
 })
