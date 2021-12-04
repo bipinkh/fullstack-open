@@ -1,14 +1,17 @@
 const express = require('express')
 const app = express()
-var morgan = require('morgan')
+const morgan = require('morgan')
+const cors = require('cors')
 
 // middlewares
-app.use( express.json() )
-morgan.token('reqbody', req => JSON.stringify(req.body) )
-app.use( morgan(':method :url :status :res[content-length] - :response-time ms :reqbody') )
+app.use(cors()) // enable cors
+app.use(express.static('build')) // serve static contents from build folder
+app.use( express.json() ) // transform every json request to json
+morgan.token('reqbody', req => JSON.stringify(req.body) ) // morgan token
+app.use( morgan(':method :url :status :res[content-length] - :response-time ms :reqbody') ) // print all requests
 
 // port binding
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
