@@ -1,7 +1,11 @@
+require("dotenv").config()
+
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+
+const Person = require('./src/models/person')
 
 // middlewares
 app.use(cors()) // enable cors
@@ -16,35 +20,11 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
-// application data
-let entries = [
-    {
-        "id": 1,
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": 2,
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": 3,
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": 4,
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
-
 
 // endpoints
 
 app.get("/api/persons", (request, response)=>{
-    response.json(entries)
+    Person.find({}).then( result => response.json(result) )
 })
 
 app.get("/info", (request, response)=>{
@@ -54,10 +34,9 @@ app.get("/info", (request, response)=>{
 })
 
 app.get("/api/persons/:id", (request, response)=>{
-    const id = Number(request.params.id)
-    const person = entries.find( e => e.id === id )
-    if (person) response.json( person )
-    else response.status(404).send(`Person with id ${id} not found.`)
+    Person.findById(request.params.id).then( person => {
+        response.json(person)
+    }).catch( error => response.status(404).send(`Person with id ${id} not found.`) )
 })
 
 app.delete("/api/persons/:id", (request, response)=> {
@@ -68,13 +47,13 @@ app.delete("/api/persons/:id", (request, response)=> {
 
 app.post("/api/persons", (request, response)=>{
     const newEntry = request.body
-
+    if (newEntry === undefined) response.status(400).json( {error:"Content missing"} )
     if (!newEntry.name) return response.status(400).json({error:"Missing name property"})
     if (!newEntry.number) return response.status(400).json({error:"Missing number property"})
-    if ( entries.find(e => e.name.toLowerCase().trim() === newEntry.name.toLowerCase().trim()) )
-        return response.status(400).json({error:"name must be unique"})
 
-    newEntry.id = Math.floor( Math.random() * 100000 )
-    entries = entries.concat(newEntry)
-    response.json(newEntry)
+    const person = new Person( {
+        name: newEntry.name,
+        number: newEntry.number
+    } )
+    person.save().then( savedPerson => response.json(savedPerson) )
 })
