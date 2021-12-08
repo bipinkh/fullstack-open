@@ -7,12 +7,15 @@ const cors = require('cors')
 
 const Person = require('./src/models/person')
 
+// setup morgan
+morgan.token('reqbody', req => JSON.stringify(req.body) ) // morgan token
+const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms :reqbody')
+
 // middlewares
 app.use(cors()) // enable cors
 app.use(express.static('build')) // serve static contents from build folder
 app.use( express.json() ) // transform every json request to json
-morgan.token('reqbody', req => JSON.stringify(req.body) ) // morgan token
-app.use( morgan(':method :url :status :res[content-length] - :response-time ms :reqbody') ) // print all requests
+app.use( requestLogger ) // print all requests
 
 // port binding
 const PORT = process.env.PORT || 3001
@@ -35,14 +38,18 @@ app.get("/info", (request, response)=>{
 
 app.get("/api/persons/:id", (request, response)=>{
     Person.findById(request.params.id).then( person => {
-        response.json(person)
-    }).catch( error => response.status(404).send(`Person with id ${id} not found.`) )
+        if (person) response.json(person)
+        else response.status(404).send(`Person with id ${id} not found.`)
+    }).catch( error => {
+        console.log(error)
+        response.status(400).send("malformatted id")
+    } )
 })
 
 app.delete("/api/persons/:id", (request, response)=> {
-    const id = Number(request.params.id)
-    entries = entries.filter( e => e.id !== id)
-    response.status(204).end()
+    Person.findByIdAndRemove( request.params.id ).then( result => {
+        response.status(204).end()
+    }).catch( error => response.status(500).end() )
 })
 
 app.post("/api/persons", (request, response)=>{
