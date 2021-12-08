@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./src/models/person')
 
+
 // setup morgan
 morgan.token('reqbody', req => JSON.stringify(req.body) ) // morgan token
 const requestLogger = morgan(':method :url :status :res[content-length] - :response-time ms :reqbody')
@@ -48,7 +49,7 @@ app.delete("/api/persons/:id", (request, response, next)=> {
     }).catch( error => next(error) )
 })
 
-app.post("/api/persons", (request, response)=>{
+app.post("/api/persons", (request, response, next)=>{
     const newEntry = request.body
     if (newEntry === undefined) response.status(400).json( {error:"Content missing"} )
     if (!newEntry.name) return response.status(400).json({error:"Missing name property"})
@@ -58,7 +59,9 @@ app.post("/api/persons", (request, response)=>{
         name: newEntry.name,
         number: newEntry.number
     } )
-    person.save().then( savedPerson => response.json(savedPerson) )
+    person.save()
+        .then( savedPerson => response.json(savedPerson) )
+        .catch( error => next(error) )
 })
 
 
@@ -83,6 +86,7 @@ app.use(unknownEndpoint)
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
     if (error.name === 'CastError') return response.status(400).send({ error: 'malformatted id' })
+    else if (error.name === 'ValidationError') return response.status(400).json({ error: error.message })
     next(error)
 }
 app.use( errorHandler ) // handle errors
