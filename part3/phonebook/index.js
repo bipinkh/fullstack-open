@@ -29,16 +29,16 @@ app.get("/api/persons", (request, response)=>{
 })
 
 app.get("/info", (request, response)=>{
-    response.send(
-        `<p>Phonebook has info for ${entries.length} people</p><p>${new Date()}</p>`
-    )
+    Person.count({}, function( err, count){
+        response.json(`<p>Phonebook has info for ${count} people</p><p>${new Date()}</p>`)
+    })
 })
 
 app.get("/api/persons/:id", (request, response, next)=>{
     const id = request.params.id
     Person.findById(id).then( person => {
         if (person) response.json(person)
-        else response.status(404).send(`Person with id ${id} not found.`)
+        else response.status(404).json({error: `Person with id ${id} not found.`})
     }).catch( error => next(error))
 })
 
