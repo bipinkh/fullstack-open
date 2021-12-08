@@ -1,0 +1,18 @@
+// this shpuld return 200
+PUT http://localhost:3001/api/persons/61b0592c8dca5812126e3436
+Content-Type: application/json
+
+{
+  "name": "Bipin Khatiwada",
+  "number": "101010"
+}
+
+###
+// this should return 400
+PUT http://localhost:3001/api/persons/1
+Content-Type: application/json
+
+{
+"name": "Bipin Khatiwada",
+"number": "111"
+}
