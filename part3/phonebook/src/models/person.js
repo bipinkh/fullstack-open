@@ -12,10 +12,16 @@ mongoose.connect(mongoUrl)
 
 // create schema
 const personSchema = new mongoose.Schema({
-    name: {type: String, required:true, unique:true},
-    number: {type: Number, required:true}
+    name: {type: String, required:true, minlength: 3},
+    number: {type: String, required:true, minlength: 8}
 })
+// run validators during POST
 personSchema.plugin(uniqueValidator)
+// also run validators in PUT
+personSchema.pre('findOneAndUpdate', function(next) {
+    this.options.runValidators = true;
+    next();
+});
 
 // set toJSON
 personSchema.set( 'toJSON', {

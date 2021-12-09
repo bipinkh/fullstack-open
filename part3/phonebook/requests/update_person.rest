@@ -3,8 +3,8 @@ PUT http://localhost:3001/api/persons/61b0592c8dca5812126e3436
 Content-Type: application/json
 
 {
-  "name": "Bipin Khatiwada",
-  "number": "101010"
+  "name": "Bi",
+  "number": "3"
 }
 
 ###

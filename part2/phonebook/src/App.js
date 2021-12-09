@@ -38,12 +38,15 @@ const App = () => {
                     setPersons( persons.map( p => p.id === duplicates[0].id ? updatedPerson : p ) )
                     setNotification(`Updated number of ${updatedPerson.name}`, false)
                 })
+                .catch( error => setNotification(error.response.data.error, true) )
+
         }else {
             phonebookService.addEntry( data )
                 .then( newPerson => {
                     setPersons( persons.concat(newPerson) )
                     setNotification(`Added ${newPerson.name}`, false)
                 })
+                .catch( error => setNotification(error.response.data.error, true) )
         }
 
         setNewName("")
