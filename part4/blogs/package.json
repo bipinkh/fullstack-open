@@ -1,0 +1,29 @@
+{
+  "name": "blogs",
+  "version": "1.0.0",
+  "description": "Blog List Application - Part 4 of Fullstack Open Course",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bipin Khatiwada",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "eslint": "^8.4.1",
+    "express": "^4.17.1",
+    "mongoose": "^6.1.1",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "nodemon": "^2.0.15"
+  }
+}

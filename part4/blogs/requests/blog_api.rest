@@ -1,0 +1,25 @@
+// get blogs
+GET http://localhost:3001/api/blogs
+
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "New Blog 1",
+  "author": "Bipin K",
+  "url": "https://erbipin.com",
+  "likes": 10
+}
+
+
+###
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+  "title": "New Blog 2",
+  "author": "Saf G",
+  "url": "https://bipinkh.com.np",
+  "likes": 25
+}
