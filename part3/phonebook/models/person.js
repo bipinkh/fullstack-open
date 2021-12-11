@@ -1,15 +1,6 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
 
-
-const mongoUrl = process.env.MONGODB_URI
-
-// connect to database
-console.log('Connecting to MongoDB...')
-mongoose.connect(mongoUrl)
-  .then( () => console.log('Connected to MongoDB.') )
-  .catch( error => console.log('Error connecting to MongoDB.', error.message) )
-
 // create schema
 const personSchema = new mongoose.Schema({
   name: { type: String, required:true, minlength: 3 },
