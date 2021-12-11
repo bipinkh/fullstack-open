@@ -10,20 +10,23 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
   },
   "author": "Bipin Khatiwada",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "eslint": "^8.4.1",
     "express": "^4.17.1",
     "mongoose": "^6.1.1",
     "nodemon": "^2.0.15"
   },
   "devDependencies": {
     "eslint": "^8.4.1",
+    "jest": "^27.4.4",
     "nodemon": "^2.0.15"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
