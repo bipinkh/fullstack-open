@@ -9,6 +9,7 @@ blogRouter.get('', async (request, response) => {
 
 blogRouter.post('', async (request, response) => {
     const blog = new Blog(request.body)
+    blog.likes = request.body.likes || 0
     const savedBlog = await blog.save()
     response.status(201).json(savedBlog)
 })

@@ -47,6 +47,15 @@ test('new blog can be added', async () => {
     expect(updatedEntriesInDb).toContainEqual(newBlog)
 }, 10000)
 
+test('missing likes property will set it to 0 in db', async () => {
+    const newBlog = sampleBlogs.blogs[0]
+    delete newBlog.likes
+    delete newBlog._id
+    const response = await api.post('/api/blogs').send(newBlog)
+        .expect(201).expect('Content-Type', /application\/json/)
+    expect(response.body.likes).toEqual( 0)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
