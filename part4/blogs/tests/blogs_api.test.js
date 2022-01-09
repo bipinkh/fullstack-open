@@ -4,6 +4,7 @@ const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 const sampleBlogs = require('../resources/sample_blogs')
+const {initialBlogs} = require("./test_helper");
 
 const api = supertest(app)
 
@@ -74,6 +75,13 @@ test('missing title or url property will raise 400 response status code', async(
     await api.post('/api/blogs').send(newBlog).expect(400)
 
 })
+
+test('existing blog can be deleted', async() => {
+    await api.delete('/api/blogs/'+helper.initialBlogs[0]._id)
+    const blogsInDb = await helper.blogsInDb()
+    expect(blogsInDb).toHaveLength(initialBlogs.length-1)
+    expect(blogsInDb).not.toContainEqual(initialBlogs[0])
+}, 10000)
 
 afterAll(() => {
     mongoose.connection.close()
