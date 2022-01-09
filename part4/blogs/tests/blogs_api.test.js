@@ -24,7 +24,7 @@ beforeEach(async () => {
     const blogObjects = helper.initialBlogs.map( blog => new Blog(blog) )
     const promiseArray = blogObjects.map( blog => blog.save() )
     await Promise.all(promiseArray)
-})
+}, 10000)
 
 
 test('blogs are returned as json', async () => {
@@ -91,11 +91,54 @@ test('missing title or url property will raise 400 response status code', async(
 
 })
 
-test('existing blog can be deleted', async() => {
-    await api.delete('/api/blogs/'+helper.initialBlogs[0]._id)
+
+test('blog cannot be deleted by anonymous user', async() => {
+    await api.delete('/api/blogs/'+helper.initialBlogs[0]._id).expect(200)
     const blogsInDb = await helper.blogsInDb()
     expect(blogsInDb).toHaveLength(initialBlogs.length-1)
     expect(blogsInDb).not.toContainEqual(initialBlogs[0])
+}, 10000)
+
+test('blog can be deleted by the creator', async() => {
+    const user = helper.initialUsers[0]
+    const loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } ).expect(200)
+    const token = 'bearer ' + loginResponse.body.token
+
+    const newBlog = {
+        title: "new random blog",
+        author: "beep in",
+        url: "https://reactpatterns.com/",
+        likes: 70
+    }
+    const blogResponse = await api.post('/api/blogs').set("Authorization", token).send(newBlog).expect(201)
+
+    await api.delete('/api/blogs/'+blogResponse.body.id).set({ "Authorization": token }).expect(204)
+    const blogsInDb = await helper.blogsInDb()
+    expect(blogsInDb).toHaveLength(initialBlogs.length)
+    expect(blogsInDb).not.toContainEqual(blogResponse)
+
+}, 10000)
+
+
+test('blog cannot be deleted by user other than creator', async() => {
+    let user = helper.initialUsers[0]
+    let loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } ).expect(200)
+    let token = 'bearer ' + loginResponse.body.token
+
+    const newBlog = {
+        title: "new random blog",
+        author: "beep in",
+        url: "https://reactpatterns.com/",
+        likes: 70
+    }
+    const blogResponse = await api.post('/api/blogs').set("Authorization", token).send(newBlog).expect(201)
+
+    user = helper.initialUsers[1]
+    loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } ).expect(200)
+    token = 'bearer ' + loginResponse.body.token
+
+    await api.delete('/api/blogs/'+blogResponse.body.id).set({ "Authorization": token }).expect(401)
+
 }, 10000)
 
 test('existing blog can be updated', async () => {
