@@ -46,15 +46,13 @@ test('all blogs are returned', async () => {
 
 test('new blog can be added', async () => {
     const user = helper.initialUsers[0]
-    const loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } )
-        .expect(200)
+    const loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } ).expect(200)
     const token = 'bearer ' + loginResponse.body.token
 
     const newBlog = sampleBlogs.blogs[0]
     newBlog._id = await helper.nonExistingId()
 
-    const response = await api.post('/api/blogs').set({ "Authorization": token }).send(newBlog)
-        .expect(201).expect('Content-Type', /application\/json/)
+    const response = await api.post('/api/blogs').set({ "Authorization": token }).send(newBlog).expect(201)
     newBlog.user = user._id
     expect(response.body.title).toEqual( newBlog.title )
 
