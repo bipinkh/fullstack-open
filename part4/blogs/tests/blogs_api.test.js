@@ -24,9 +24,12 @@ test('blogs are returned as json', async () => {
 test('all blogs are returned', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength( helper.initialBlogs.length)
-    const titles = response.body.map( b => b.title )
-    expect(titles).toContain( helper.initialBlogs[0].title )
-    expect(titles).toContain( helper.initialBlogs[1].title )
+    const titles = []
+    response.body.forEach( res => {
+        titles.push(res.title)
+        expect(res.id).toBeDefined()
+    } )
+    helper.initialBlogs.forEach( b => expect(titles).toContain(b.title) )
 }, 10000)
 
 
