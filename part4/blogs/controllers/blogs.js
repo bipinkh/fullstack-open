@@ -1,16 +1,19 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
-
+const User = require('../models/user')
 
 blogRouter.get('', async (request, response) => {
     const blogs = await Blog.find({})
+        .populate('user', {username: 1, name: 1, id: 1})
     response.json( blogs )
 })
 
 blogRouter.post('', async (request, response) => {
+    const user = await User.find({})
     const blog = new Blog(request.body)
+    blog.user = user[0]._id
     if(blog.title === undefined || blog.url === undefined){
-        response.status(400).end()
+        response.status(400).send('Title and URL cannot be empty')
         return
     }
     blog.likes = request.body.likes || 0
