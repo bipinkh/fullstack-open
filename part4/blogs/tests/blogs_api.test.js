@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const sampleBlogs = require('../resources/sample_blogs')
 
 const api = supertest(app)
 
@@ -15,10 +16,8 @@ beforeEach(async () => {
 
 
 test('blogs are returned as json', async () => {
-    await api
-        .get('/api/blogs')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+    await api.get('/api/blogs')
+        .expect(200).expect('Content-Type', /application\/json/)
 }, 10000)
 
 test('all blogs are returned', async () => {
@@ -32,6 +31,21 @@ test('all blogs are returned', async () => {
     helper.initialBlogs.forEach( b => expect(titles).toContain(b.title) )
 }, 10000)
 
+
+test('new blog can be added', async () => {
+    const newBlog = sampleBlogs.blogs[0]
+    newBlog._id = await helper.nonExistingId()
+
+    const response = await api.post('/api/blogs').send(newBlog)
+        .expect(201).expect('Content-Type', /application\/json/)
+    expect(response.body).toEqual( helper.toJson(newBlog) )
+
+    await api.get('/get/blogs')
+
+    const updatedEntriesInDb = await helper.blogsInDb()
+    expect(updatedEntriesInDb).toHaveLength( helper.initialBlogs.length + 1)
+    expect(updatedEntriesInDb).toContainEqual(newBlog)
+}, 10000)
 
 afterAll(() => {
     mongoose.connection.close()
