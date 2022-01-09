@@ -56,6 +56,25 @@ test('missing likes property will set it to 0 in db', async () => {
     expect(response.body.likes).toEqual( 0)
 })
 
+test('missing title or url property will raise 400 response status code', async() => {
+    let newBlog = sampleBlogs.blogs[0]
+    delete newBlog._id
+    delete newBlog.title
+    await api.post('/api/blogs').send(newBlog).expect(400)
+
+    newBlog = sampleBlogs.blogs[0]
+    delete newBlog._id
+    delete newBlog.url
+    await api.post('/api/blogs').send(newBlog).expect(400)
+
+    newBlog = sampleBlogs.blogs[0]
+    delete newBlog._id
+    delete newBlog.title
+    delete newBlog.url
+    await api.post('/api/blogs').send(newBlog).expect(400)
+
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
