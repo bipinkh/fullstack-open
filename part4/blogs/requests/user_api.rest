@@ -1,0 +1,9 @@
+// get users
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "bipin",
+  "password": "sekretp@ss",
+  "name": "bipin k"
+}
