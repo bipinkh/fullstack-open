@@ -4,7 +4,11 @@ const bcrypt = require('bcrypt')
 
 userRouter.post('', async (request, response) => {
     if(request.body.username === undefined || request.body.password === undefined){
-        response.status(400)
+        response.status(400).send("Empty username or password")
+        return
+    }
+    if(request.body.password.length < 3){
+        response.status(400).send("Password less than 3 characters")
         return
     }
     const saltRounds = 10
