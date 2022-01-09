@@ -1,3 +1,5 @@
+const lodash = require('lodash')
+
 const dummy = (blogs) => {
     return 1
 }
@@ -13,6 +15,22 @@ const favoriteBlog = (blogs) => {
 }
 
 
+const mostBlogs = (blogs) => {
+    if (blogs.length === 0) return null
+    const reducer = (blogCountMap, blog) => {
+        return blogCountMap[blog.author] === undefined ?
+            { ...blogCountMap, [blog.author]: 1 } :
+            { ...blogCountMap, [blog.author]: blogCountMap[blog.author] + 1 }
+    }
+    const authorAndBlogCount = blogs.reduce( reducer, {} )
+    const authorWithMaxBlogs = Object.keys(authorAndBlogCount)
+        .sort( (a1, a2) => authorAndBlogCount[a2] - authorAndBlogCount[a1] )[0];
+    return {
+        author: authorWithMaxBlogs,
+        blogs: authorAndBlogCount[authorWithMaxBlogs]
+    }
+};
+
 module.exports = {
-    dummy, countLikes, favoriteBlog
+    dummy, countLikes, favoriteBlog, mostBlogs
 }
