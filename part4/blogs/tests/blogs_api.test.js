@@ -2,13 +2,24 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 const sampleBlogs = require('../resources/sample_blogs')
 const {initialBlogs} = require("./test_helper");
-
+const bcrypt = require('bcrypt')
 const api = supertest(app)
 
 beforeEach(async () => {
+    await User.deleteMany({})
+    for( let user of helper.initialUsers){
+        let userObject = new User( {
+            username: user.username,
+            password: await bcrypt.hash( user.password, 10 ),
+            name: user.name
+        } )
+        await userObject.save()
+    }
+
     await Blog.deleteMany({})
     const blogObjects = helper.initialBlogs.map( blog => new Blog(blog) )
     const promiseArray = blogObjects.map( blog => blog.save() )
@@ -34,18 +45,22 @@ test('all blogs are returned', async () => {
 
 
 test('new blog can be added', async () => {
+    const user = helper.initialUsers[0]
+    const loginResponse = await api.post('/api/login').send( { username:user.username, password: user.password } )
+        .expect(200)
+    const token = 'bearer ' + loginResponse.body.token
+
     const newBlog = sampleBlogs.blogs[0]
     newBlog._id = await helper.nonExistingId()
 
-    const response = await api.post('/api/blogs').send(newBlog)
+    const response = await api.post('/api/blogs').set({ "Authorization": token }).send(newBlog)
         .expect(201).expect('Content-Type', /application\/json/)
-    expect(response.body).toEqual( helper.toJson(newBlog) )
-
-    await api.get('/get/blogs')
+    newBlog.user = user._id
+    expect(response.body.title).toEqual( newBlog.title )
 
     const updatedEntriesInDb = await helper.blogsInDb()
     expect(updatedEntriesInDb).toHaveLength( helper.initialBlogs.length + 1)
-    expect(updatedEntriesInDb).toContainEqual(newBlog)
+    expect( updatedEntriesInDb.map( e => e.title) ).toContainEqual( newBlog.title )
 }, 10000)
 
 test('missing likes property will set it to 0 in db', async () => {
