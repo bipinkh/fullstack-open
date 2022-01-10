@@ -67,11 +67,23 @@ const App = () => {
     const handleNewBlogAddition = async (newBlog) => {
         try{
             const blog = await blogService.addBlog(newBlog)
-            setBlogs(blogs.concat(blog))
+            blogService.getAll().then(blogs => setBlogs( blogs ))
             setInfoMessage(`a new blog ${blog.title} by ${blog.author}`)
             setTimeout(() => { setInfoMessage(null) }, 5000)
         } catch (exception) {
             setErrorMessage(`Failed to add blog. ${exception.message}`)
+            setTimeout(() => { setErrorMessage(null) }, 5000)
+        }
+    }
+    const handleBlogLike = async (blogId) => {
+        const blog = blogs.filter( b => b.id === blogId )[0]
+        try{
+            await blogService.like(blog)
+            setBlogs( await blogService.getAll() )
+            setInfoMessage(`liked ${blog.title} by ${blog.author}`)
+            setTimeout(() => { setInfoMessage(null) }, 5000)
+        } catch (exception) {
+            setErrorMessage(`Failed to like blog ${blog.title}. ${exception.message}`)
             setTimeout(() => { setErrorMessage(null) }, 5000)
         }
     }
@@ -91,7 +103,7 @@ const App = () => {
 
           <hr/>
 
-          { blogs.map(blog => <Blog key={blog.id} blog={blog} />) }
+          { blogs.map(blog => <Blog key={blog.id} blog={blog} like={handleBlogLike}/>) }
 
 
       </div>

@@ -9,15 +9,17 @@ const blogStyle = {
     marginBottom: 5
 }
 
-const Blog = ({blog}) => (
-  <div style={blogStyle}>
-      <div>{blog.title}</div>
-      <Togglable buttonLabel="view" hideLabel="hide">
-          {blog.url}<br/>
-          {blog.likes} <button>like</button> <br/>
-          {blog.author}<br/>
-      </Togglable>
-  </div>
-)
+const Blog = ({blog, like}) => {
+    return (
+        <div style={blogStyle}>
+            <div>{blog.title}</div>
+            <Togglable buttonLabel="view" hideLabel="hide">
+                {blog.url}<br/>
+                {blog.likes} <button onClick = { () => like(blog.id) }>like</button> <br/>
+                {blog.author}<br/>
+            </Togglable>
+        </div>
+    )
+}
 
 export default Blog
