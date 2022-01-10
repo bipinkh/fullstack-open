@@ -2,21 +2,22 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import ErrorMessage from "./components/ErrorMessage";
+import Notification from "./components/Notification";
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [user, setUser] = useState('')
+    const [user, setUser] = useState(null)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
+    const [infoMessage, setInfoMessage] = useState(null)
     const [newBlog, setNewBlog] = useState('')
     const [newBlogAuthor, setNewBlogAuthor] = useState('')
     const [newBlogUrl, setNewBlogUrl] = useState('')
 
   useEffect(() => {
       const loggedUserJSON = window.localStorage.getItem('loggedUser')
-      if (loggedUserJSON) {
+      if (loggedUserJSON !== null) {
           const user = JSON.parse(loggedUserJSON)
           setUser(user)
           blogService.setToken( user.token )
@@ -35,7 +36,7 @@ const App = () => {
         setUsername('')
         setPassword('')
     } catch (exception) {
-        setErrorMessage('Wrong credentials')
+        setErrorMessage('Wrong username or password')
         setTimeout(() => { setErrorMessage(null) }, 5000)
     }
   }
@@ -76,6 +77,8 @@ const App = () => {
             setNewBlog('')
             setNewBlogAuthor('')
             setNewBlogUrl('')
+            setInfoMessage(`a new blog ${blog.title} by ${blog.author}`)
+            setTimeout(() => { setInfoMessage(null) }, 5000)
         } catch (exception) {
             setErrorMessage(`Failed to add blog. ${exception.message}`)
             setTimeout(() => { setErrorMessage(null) }, 5000)
@@ -112,9 +115,10 @@ const App = () => {
 
   return (
     <div>
+        {errorMessage !== null && <Notification message={errorMessage} isError={true} />}
+        {infoMessage !== null && <Notification message={infoMessage} isError={false} />}
         {user === null && loginForm()}
         {user !== null && blogsSection()}
-        {errorMessage !== null && <ErrorMessage errorMessage={errorMessage} />}
     </div>
   )
 }
