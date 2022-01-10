@@ -15,9 +15,9 @@ const Blog = ({ blog, like, deleteBlog }) => {
       <div>{blog.title} {blog.author}</div>
       <Togglable buttonLabel="view" hideLabel="hide">
         {blog.url}<br/>
-        {blog.likes} <button onClick = { () => like(blog.id) }>like</button> <br/>
+        {blog.likes} <button className='likeButton' onClick = { () => like(blog.id) }>like</button> <br/>
         {blog.author}<br/>
-        {deleteBlog && <button onClick = { () => deleteBlog(blog.id) }>delete</button>}
+        {deleteBlog && <button className='deleteButton' onClick = { () => deleteBlog(blog.id) }>delete</button>}
       </Togglable>
     </div>
   )

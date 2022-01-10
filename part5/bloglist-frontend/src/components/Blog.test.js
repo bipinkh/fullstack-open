@@ -42,4 +42,12 @@ describe('<Blog />', () => {
     expect(togglableContentDiv).toHaveTextContent('10')
   })
 
+  test('if the like button is clicked twice, the event handler the component received as props is called twice', () => {
+    const likeButton = component.container.querySelector('.likeButton')
+    expect(likeMockHandler.mock.calls).toHaveLength(0)
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+    expect(likeMockHandler.mock.calls).toHaveLength(2)
+  })
+
 } )
