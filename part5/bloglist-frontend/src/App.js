@@ -2,21 +2,26 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+    const [blogs, setBlogs] = useState([])
+    const [user, setUser] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [newBlog, setNewBlog] = useState('')
+    const [newBlogAuthor, setNewBlogAuthor] = useState('')
+    const [newBlogUrl, setNewBlogUrl] = useState('')
 
   useEffect(() => {
       const loggedUserJSON = window.localStorage.getItem('loggedUser')
       if (loggedUserJSON) {
           const user = JSON.parse(loggedUserJSON)
           setUser(user)
-          blogService.getAll().then(blogs => setBlogs( blogs ))
+          blogService.setToken( user.token )
       }
+      blogService.getAll().then(blogs => setBlogs( blogs ))
   }, [])
 
   const handleLogin = async (event) => {
@@ -24,8 +29,9 @@ const App = () => {
     console.log('logging in with', username, password)
     try {
         const user = await loginService.login({username, password,})
-        window.localStorage.setItem('loggedUser', JSON.stringify(user))
         setUser(user)
+        blogService.setToken(user.token)
+        window.localStorage.setItem('loggedUser', JSON.stringify(user))
         setUsername('')
         setPassword('')
     } catch (exception) {
@@ -37,6 +43,7 @@ const App = () => {
   const handleLogout = async (event) =>  {
       event.preventDefault()
       window.localStorage.removeItem('loggedUser')
+      blogService.setToken('')
       setUser(null)
   }
 
@@ -56,24 +63,58 @@ const App = () => {
       </form>
   )
 
-  const blogList = () => (
+    const handleNewBlogAddition = async (event) => {
+        event.preventDefault()
+        try{
+            const blogRequest = {
+                "title": newBlog,
+                "author": newBlogAuthor,
+                "url": newBlogUrl
+            }
+            const blog = await blogService.addBlog(blogRequest)
+            setBlogs(blogs.concat(blog))
+            setNewBlog('')
+            setNewBlogAuthor('')
+            setNewBlogUrl('')
+        } catch (exception) {
+            setErrorMessage(`Failed to add blog. ${exception.message}`)
+            setTimeout(() => { setErrorMessage(null) }, 5000)
+        }
+    }
+
+    const newBlogForm = () => (
+        <form onSubmit={handleNewBlogAddition}>
+            title: <input value={newBlog}
+                   onChange={({ target }) => setNewBlog(target.value)}
+            /> <br/>
+            author: <input value={newBlogAuthor}
+                   onChange={({ target }) => setNewBlogAuthor(target.value)}
+            /> <br/>
+            url: <input value={newBlogUrl}
+                   onChange={({ target }) => setNewBlogUrl(target.value)}
+            /> <br/>
+            <button type="submit">save</button>
+        </form>
+    )
+
+  const blogsSection = () => (
       <div>
           <h2>blogs</h2>
-          <h3>{user.username} logged in</h3>
-          <button onClick={handleLogout}>logout</button>
-          {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+          <b>{user.username} logged in</b>
+          <button onClick={handleLogout}>logout</button> <br/>
 
+          { blogs.map(blog => <Blog key={blog.id} blog={blog} />) }
+
+          <h2>create new</h2>
+          {newBlogForm()}
       </div>
   )
 
   return (
     <div>
         {user === null && loginForm()}
-        {user !== null && blogList()}
-        {
-            errorMessage !== null &&
-            <div style={{ color: 'red' }}>{errorMessage}</div>
-        }
+        {user !== null && blogsSection()}
+        {errorMessage !== null && <ErrorMessage errorMessage={errorMessage} />}
     </div>
   )
 }
