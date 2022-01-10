@@ -9,7 +9,7 @@ const blogStyle = {
     marginBottom: 5
 }
 
-const Blog = ({blog, like}) => {
+const Blog = ({blog, like, deleteBlog}) => {
     return (
         <div style={blogStyle}>
             <div>{blog.title}</div>
@@ -17,6 +17,7 @@ const Blog = ({blog, like}) => {
                 {blog.url}<br/>
                 {blog.likes} <button onClick = { () => like(blog.id) }>like</button> <br/>
                 {blog.author}<br/>
+                {deleteBlog && <button onClick = { () => deleteBlog(blog.id) }>delete</button>}
             </Togglable>
         </div>
     )

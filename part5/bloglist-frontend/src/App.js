@@ -88,6 +88,20 @@ const App = () => {
         }
     }
 
+    const handleBlogDelete = async (blogId) => {
+        const blog = blogs.filter( b => b.id === blogId )[0]
+        try{
+            if ( ! window.confirm(`Remove ${blog.title} by ${blog.author}?`) ) return
+            await blogService.deleteBlog(blogId)
+            setBlogs( await blogService.getAll() )
+            setInfoMessage(`deleted ${blog.title} by ${blog.author}`)
+            setTimeout(() => { setInfoMessage(null) }, 5000)
+        } catch (exception) {
+            setErrorMessage(`Failed to like blog ${blog.title}. ${exception.message}`)
+            setTimeout(() => { setErrorMessage(null) }, 5000)
+        }
+    }
+
   const blogsSection = () => (
       <div>
           <h2>blogs</h2>
@@ -103,7 +117,17 @@ const App = () => {
 
           <hr/>
 
-          { blogs.map(blog => <Blog key={blog.id} blog={blog} like={handleBlogLike}/>) }
+          {
+              blogs.sort((a,b) => b.likes - a.likes )
+                  .map(
+                      blog => {
+                          const allowDelete = blog.user  && (blog.user.username === user.username)
+                          return <Blog
+                              key={blog.id} blog={blog} like={handleBlogLike}
+                              deleteBlog={allowDelete ? handleBlogDelete : null}
+                          />
+                      })
+          }
 
 
       </div>
