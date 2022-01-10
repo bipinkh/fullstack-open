@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import BlogForm from "./components/BlogForm";
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
@@ -12,9 +13,7 @@ const App = () => {
     const [password, setPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
     const [infoMessage, setInfoMessage] = useState(null)
-    const [newBlog, setNewBlog] = useState('')
-    const [newBlogAuthor, setNewBlogAuthor] = useState('')
-    const [newBlogUrl, setNewBlogUrl] = useState('')
+
 
   useEffect(() => {
       const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -65,19 +64,10 @@ const App = () => {
       </form>
   )
 
-    const handleNewBlogAddition = async (event) => {
-        event.preventDefault()
+    const handleNewBlogAddition = async (newBlog) => {
         try{
-            const blogRequest = {
-                "title": newBlog,
-                "author": newBlogAuthor,
-                "url": newBlogUrl
-            }
-            const blog = await blogService.addBlog(blogRequest)
+            const blog = await blogService.addBlog(newBlog)
             setBlogs(blogs.concat(blog))
-            setNewBlog('')
-            setNewBlogAuthor('')
-            setNewBlogUrl('')
             setInfoMessage(`a new blog ${blog.title} by ${blog.author}`)
             setTimeout(() => { setInfoMessage(null) }, 5000)
         } catch (exception) {
@@ -85,21 +75,6 @@ const App = () => {
             setTimeout(() => { setErrorMessage(null) }, 5000)
         }
     }
-
-    const newBlogForm = () => (
-        <form onSubmit={handleNewBlogAddition}>
-            title: <input value={newBlog}
-                   onChange={({ target }) => setNewBlog(target.value)}
-            /> <br/>
-            author: <input value={newBlogAuthor}
-                   onChange={({ target }) => setNewBlogAuthor(target.value)}
-            /> <br/>
-            url: <input value={newBlogUrl}
-                   onChange={({ target }) => setNewBlogUrl(target.value)}
-            /> <br/>
-            <button type="submit">save</button>
-        </form>
-    )
 
   const blogsSection = () => (
       <div>
@@ -111,7 +86,7 @@ const App = () => {
 
           <Togglable buttonLabel='create new blog'>
               <h2>create new</h2>
-              {newBlogForm()}
+              <BlogForm addNewBlog={handleNewBlogAddition} />
           </Togglable>
 
           <hr/>
