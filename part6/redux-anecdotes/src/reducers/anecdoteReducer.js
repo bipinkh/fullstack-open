@@ -1,5 +1,4 @@
 import anecdoteService from '../services/anecdotes'
-import {useDispatch} from "react-redux";
 
 
 export const getId = () => (100000 * Math.random()).toFixed(0)
@@ -44,7 +43,12 @@ export const initialAnecdotesAction = () => {
   }
 }
 
-export const voteAction = (id) =>  { return {type: 'VOTE', data: {id: id}} }
+export const voteAction = (id) =>  {
+  return async dispatch => {
+    await anecdoteService.vote(id)
+    dispatch({type: 'VOTE', data: {id: id}})
+  }
+}
 
 export const createAction = (anecdote) =>  {
   return async dispatch => {
