@@ -5,6 +5,7 @@ import {notificationAction, clearNotificationAction} from "../reducers/notificat
 
 const AnecdoteList = () => {
     const anecdotes = useSelector(state => state.anecdotes)
+    const filter = useSelector(state => state.filter)
     const dispatch = useDispatch()
 
     const vote = (id) => {
@@ -14,11 +15,14 @@ const AnecdoteList = () => {
         setTimeout( () => dispatch(clearNotificationAction()), 5000)
     }
 
+    let anecdotesToDisplay = filter.length > 0
+        ? anecdotes.filter( a => a.content.includes(filter) )
+        : anecdotes
+    anecdotesToDisplay = anecdotesToDisplay.sort( (a,b) => b.votes - a.votes )
 
     return (
         <div>
-            {anecdotes
-                .sort( (a,b) => b.votes - a.votes )
+            {anecdotesToDisplay
                 .map(anecdote =>
                     <div key={anecdote.id}>
                         <div>
