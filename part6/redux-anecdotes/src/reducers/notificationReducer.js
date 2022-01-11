@@ -22,10 +22,14 @@ export const clearNotificationAction = () => {
     }
 }
 
+
+let clearNotificationReference = null
+
 export const setNotificationAction = (message, timeout = 5) => {
     return async dispatch => {
         dispatch( {type: 'NOTIFY', data: { message: message }} )
-        setTimeout(() => dispatch(clearNotificationAction()), timeout*1000)
+        if (clearNotificationReference) clearTimeout(clearNotificationReference)
+        clearNotificationReference = setTimeout(() => dispatch(clearNotificationAction()), timeout*1000)
     }
 }
 
