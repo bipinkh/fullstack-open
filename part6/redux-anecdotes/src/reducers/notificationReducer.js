@@ -1,12 +1,24 @@
-const initialNotification = 'notification example!'
+const initialNotification = {
+    message: null,
+    display: false
+}
 
 
 const reducer = (state = initialNotification, action) => {
     switch (action.type){
         case 'NOTIFY':
-            return action.data.message
+            return { message: action.data.message, display: true}
+        case 'CLEAR':
+            return { message: null, display: false}
         default:
             return state
+    }
+}
+
+export const clearNotificationAction = () => {
+    return {
+        type: 'CLEAR',
+        data: null
     }
 }
 
