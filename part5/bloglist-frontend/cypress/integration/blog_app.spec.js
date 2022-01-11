@@ -36,11 +36,7 @@ describe('Blog app', () => {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', { username: 'bipin', password: 'sekretp@ss' })
-        .then(response => {
-          localStorage.setItem('loggedUser', JSON.stringify(response.body))
-          cy.visit('http://localhost:3000')
-        })
+      cy.login({ username: 'bipin', password: 'sekretp@ss' })
     })
 
     it('A blog can be created', function() {
@@ -51,8 +47,21 @@ describe('Blog app', () => {
       cy.get('.newBlogSaveButton').click()
       cy.get('.message').contains('a new blog Random Blog by Elon Musk')
     })
+
+    describe('and has a blog', function (){
+
+      beforeEach(function() {
+        cy.createBlog({ title: 'New Blog Test', author: 'Bipin K', url: 'https://erbipin.com', likes: 71 })
+      })
+
+      it(' can like the blog', function (){
+        cy.contains('view').click()
+        cy.contains('like').click()
+        cy.contains('72')
+      })
+
+    })
+
   })
-
-
 
 })
