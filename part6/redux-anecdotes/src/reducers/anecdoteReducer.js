@@ -20,9 +20,18 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const reducer = (state = initialState, action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
-
+  switch (action.type){
+    case 'VOTE':
+      const id = action.data.id
+      const anecdoteToVote = state.filter( ad => ad.id === id)
+      if(anecdoteToVote && anecdoteToVote[0]){
+        const updatedAnecdote = {...anecdoteToVote[0], votes: anecdoteToVote[0].votes+1}
+        return state.map( a => a.id ===  id ? updatedAnecdote : a)
+      }
+      return state
+    default:
+      return state
+  }
   return state
 }
 
