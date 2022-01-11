@@ -34,6 +34,25 @@ describe('Blog app', () => {
     })
   })
 
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.request('POST', 'http://localhost:3003/api/login', { username: 'bipin', password: 'sekretp@ss' })
+        .then(response => {
+          localStorage.setItem('loggedUser', JSON.stringify(response.body))
+          cy.visit('http://localhost:3000')
+        })
+    })
+
+    it('A blog can be created', function() {
+      cy.get('.toggleButton').click()
+      cy.get('#title').type('Random Blog')
+      cy.get('#author').type('Elon Musk')
+      cy.get('#url').type('spacex.com')
+      cy.get('.newBlogSaveButton').click()
+      cy.get('.message').contains('a new blog Random Blog by Elon Musk')
+    })
+  })
+
 
 
 })
