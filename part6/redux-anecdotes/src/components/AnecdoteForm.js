@@ -1,8 +1,7 @@
 import React from "react";
 import {useDispatch} from "react-redux";
 import {createAction} from "../reducers/anecdoteReducer";
-import {notificationAction, clearNotificationAction} from "../reducers/notificationReducer";
-import anecdoteService from '../services/anecdotes'
+import {setNotificationAction} from "../reducers/notificationReducer";
 import {getId} from "../reducers/anecdoteReducer";
 
 const AnecdoteForm = () => {
@@ -14,8 +13,7 @@ const AnecdoteForm = () => {
         event.target.newEntry.value = ''
         const anecdote = { content: newAd, id: getId(), votes: 0 }
         dispatch(createAction(anecdote))
-        dispatch( notificationAction(`you created '${newAd}'`) )
-        setTimeout( () => dispatch(clearNotificationAction()), 5000)
+        dispatch( setNotificationAction(`you created '${newAd}'`) )
     }
 
     return (
