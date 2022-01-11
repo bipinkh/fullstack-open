@@ -12,7 +12,7 @@ const blogStyle = {
 const Blog = ({ blog, like, deleteBlog }) => {
   return (
     <div style={blogStyle} className="blogDetail">
-      <div>{blog.title} {blog.author}</div>
+      <div className='blogListItem'>{blog.title} {blog.author}</div>
       <Togglable buttonLabel="view" hideLabel="hide">
         {blog.url}<br/>
         {blog.likes} <button className='likeButton' onClick = { () => like(blog.id) }>like</button> <br/>
