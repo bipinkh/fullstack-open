@@ -6,14 +6,17 @@ const App = () => {
   const dispatch = useDispatch()
 
   const vote = (id) => {
-      const action = {
-        type: 'VOTE',
-          data: {
-            id: id
-          }
-      }
+      const action = { type: 'VOTE', data: {id: id} }
       dispatch(action)
   }
+
+  const create = (event) => {
+      event.preventDefault()
+      const newAd = event.target.newEntry.value
+      event.target.newEntry.value = ''
+      const action = { type: 'CREATE', data: {content: newAd} }
+      dispatch(action)
+    }
 
   return (
     <div>
@@ -30,9 +33,9 @@ const App = () => {
         </div>
       )}
       <h2>create new</h2>
-      <form>
-        <div><input /></div>
-        <button>create</button>
+      <form onSubmit={create}>
+        <div><input name='newEntry'/></div>
+        <button type="submit">create</button>
       </form>
     </div>
   )
