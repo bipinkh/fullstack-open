@@ -13,8 +13,7 @@ const AnecdoteForm = () => {
         const newAd = event.target.newEntry.value
         event.target.newEntry.value = ''
         const anecdote = { content: newAd, id: getId(), votes: 0 }
-        const savedAnecdote = await anecdoteService.create(anecdote)
-        dispatch(createAction(savedAnecdote))
+        dispatch(createAction(anecdote))
         dispatch( notificationAction(`you created '${newAd}'`) )
         setTimeout( () => dispatch(clearNotificationAction()), 5000)
     }
