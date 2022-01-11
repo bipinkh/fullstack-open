@@ -60,6 +60,13 @@ describe('Blog app', () => {
         cy.contains('72')
       })
 
+      it(' can delete the blog', function (){
+        cy.contains('New Blog Test')
+        cy.contains('view').click()
+        cy.contains('delete').click()
+        cy.contains('deleted New Blog Test by Bipin K')
+      })
+
     })
 
   })
